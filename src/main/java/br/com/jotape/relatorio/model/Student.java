@@ -1,10 +1,11 @@
-package br.com.jotape.relatorio.jotape.relatorio.model;
+package br.com.jotape.relatorio.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -12,8 +13,8 @@ import java.util.UUID;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "school")
-public class School {
+@Table(name = "student")
+public class Student {
 
     @Id
     private String id;
@@ -21,11 +22,27 @@ public class School {
     @Column
     private String name;
 
+    @Column
+    private String email;
+
+    @Column
+    private String password;
+
+    @Column
+    private LocalDate birthday;
+
+    @ManyToOne
+    private School school;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public School(String name) {
+    public Student(String name, String email, String password, LocalDate birthday, School school) {
         this.name = name;
+        this.email = email;
+        this.password = password;
+        this.birthday = birthday;
+        this.school = school;
     }
 
     @PrePersist
