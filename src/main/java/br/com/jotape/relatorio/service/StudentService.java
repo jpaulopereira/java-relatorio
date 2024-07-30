@@ -14,12 +14,21 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 import lombok.AllArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -108,4 +117,51 @@ public class StudentService {
         return report.getByteArrayInputStream();
     }
 
+    public ByteArrayResource export() throws IOException {
+        List<Student> list = studentRepository.findAll();
+
+        Workbook workbook = new XSSFWorkbook();
+        String nomeDaAba = WorkbookUtil.createSafeSheetName("Relatório");
+        Sheet aba = workbook.createSheet(nomeDaAba);
+
+        var headerFields = Arrays.asList(
+                "NAME", "EMAIL", "AGE", "BIRTHDAY", "SCHOOL", "CREATED AT"
+        );
+
+        Row rowHeader = aba.createRow(0);
+
+        for (int i = 0; i < headerFields.size(); i++) {
+            Cell headerCell = rowHeader.createCell(i);
+            headerCell.setCellValue(headerFields.get(i));
+        }
+
+        int rowIndex = 1;
+        for (Student student : list) {
+            Row userRow = aba.createRow(rowIndex++);
+
+            Cell idStudent = userRow.createCell(0);
+            idStudent.setCellValue(student.getId());
+
+            Cell name = userRow.createCell(1);
+            name.setCellValue(student.getName());
+
+            Cell email = userRow.createCell(2);
+            email.setCellValue(student.getEmail());
+
+            Cell birthday = userRow.createCell(3);
+            birthday.setCellValue(DateUtils.format(student.getBirthday(), "dd/MM/yyyy"));
+
+            Cell school = userRow.createCell(4);
+            school.setCellValue(student.getSchool().getName());
+
+            Cell createdAt = userRow.createCell(5);
+            createdAt.setCellValue(DateUtils.format(student.getCreatedAt(),"dd/MM/yyyy"));
+        }
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        workbook.write(stream);
+        workbook.close();
+
+        return new ByteArrayResource(stream.toByteArray());
+    }
 }
