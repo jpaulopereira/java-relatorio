@@ -11,7 +11,7 @@ Este projeto foi desenvolvido para gerar relatórios personalizados em formatos 
 - **Apache POI**: Biblioteca para criação e manipulação de arquivos Excel.
 - **Maven**: Gerenciamento de dependências e build do projeto.
 - **Lombok**: Para reduzir boilerplate de código.
-- 
+
 ## 📋 Funcionalidades
 - **Geração de Relatórios PDF**: Produção de relatórios PDF com tabelas, dados formatados e ordenação personalizada.
 - **Geração de Relatórios Excel**: Criação de planilhas Excel com formatação personalizada.
